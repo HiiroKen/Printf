@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmorra <fmorra@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/17 13:25:05 by fmorra            #+#    #+#             */
-/*   Updated: 2024/05/17 13:25:06 by fmorra           ###   ########.fr       */
+/*   Created: 2024/05/17 12:39:24 by fmorra            #+#    #+#             */
+/*   Updated: 2024/05/18 14:05:32 by fmorra           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ static int	put_x(char s, long long nb)
 		total = ft_putnbr_hexa(nb, "0123456789abcdef");
 	if (s == 'X')
 		total = ft_putnbr_hexa(nb, "0123456789ABCDEF");
+	if (s == 'u')
+		total = ft_putnbr_u(nb);
 	return (total);
 }
 
@@ -42,11 +44,8 @@ static char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-int	know_type(const char *s, va_list ap)
+int	know_type(const char *s, va_list ap, int total)
 {
-	int	total;
-
-	total = 0;
 	while (*s)
 	{
 		if (*s == '%' && ft_strchr("cspdiuxX%", *(s + 1)))
@@ -60,9 +59,7 @@ int	know_type(const char *s, va_list ap)
 				total += (put_p(va_arg(ap, unsigned long)));
 			else if (*s == 'd' || *s == 'i')
 				total += (ft_putnbr(va_arg(ap, int)));
-			else if (*s == 'u')
-				total += (ft_putnbr_u(va_arg(ap, unsigned int)));
-			else if (*s == 'x' || *s == 'X')
+			else if (*s == 'x' || *s == 'X' || *s == 'u')
 				total += (put_x(*s, va_arg(ap, unsigned int)));
 			else if (*s == '%')
 				total += (ft_putchar('%'));
@@ -81,7 +78,7 @@ int	ft_printf(const char *s, ...)
 
 	total = 0;
 	va_start(ap, s);
-	total += know_type(s, ap);
+	total += know_type(s, ap, total);
 	va_end(ap);
 	return (total);
 }
